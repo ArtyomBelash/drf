@@ -1,0 +1,106 @@
+{% load static %}
+<head>
+    <link rel="icon" href="{% static 'img/img_2.png' %}" type="image/png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/cerulean/bootstrap.min.css"
+          integrity="sha384-3fdgwJw17Bi87e1QQ4fsLn4rUFqWw//KU0g8TvV6quvahISRewev6/EocKNuJmEw" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/style.css'%}">
+    <title>
+    {% block title %}
+    Dishes
+    {% endblock %}
+    </title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-warning">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'index' %}">Dishes</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
+                aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarColor01">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'random' %}">Случайный рецепт</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+                       aria-haspopup="true" aria-expanded="false">Категории</a>
+                    <div class="dropdown-menu">
+                        {% for cat in cats %}
+                        <a class="dropdown-item" href="{% url 'category' slug=cat.slug %}" name="cat_slug">
+                            {{ cat.name }}</a>
+                        {% endfor %}
+                    </div>
+                </li>
+            </ul>
+
+            <form class="d-flex" method="get" name="search" action="{% url 'search' %}">
+
+                <input class="form-control me-sm-2" name="search" type="search" placeholder="Поиск рецепта">
+                <button class="btn btn-secondary my-2 my-sm-0" type="submit">Поиск</button>
+            </form>
+        </div>
+    </div>
+</nav>
+{% block page_content %}
+<h1>Hello</h1>
+{% endblock %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+{% if page_obj.has_other_pages %}
+<br>
+<div class="col-md-8 offset-md-2">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            {% if request.GET.search %}
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ request.GET.search }}">&laquo;</a>
+            {% else %}
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a>
+            {% endif %}
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link">&laquo;</a>
+        </li>
+        {% endif %}
+        {% for p in paginator.page_range %}
+        {% if page_obj.number == p %}
+        <li class="page-item active">
+            <a class="page-link" href="#">{{ p }}</a>
+        </li>
+        {% elif p >= page_obj.number|add:-1 and p <= page_obj.number|add:1 %}
+        <li class="page-item ">
+            {% if request.GET.search %}
+            <a class="page-link" href="?page={{ p }}&search={{ request.GET.search }}">{{ p }}</a>
+            {% else %}
+            <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+            {% endif %}
+        </li>
+        {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            {% if request.GET.search %}
+            <a class="page-link"
+               href="?page={{ page_obj.next_page_number }}&search={{ request.GET.search }}">&raquo;</a>
+            {% else %}
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a>
+            {% endif %}
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link">&raquo;</a>
+        </li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
+</body>
+

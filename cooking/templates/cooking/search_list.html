@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}
+{{ request.GET.search }}
+{% endblock %}
+{% block page_content %}
+<div class="container">
+    <br>
+    <div class="recipe-container">
+        {% if dishes.error %}
+        <h1>{{ dishes.error }}</h1>
+        {% else %}
+        {% for dish in dishes_by_search %}
+        <div class="recipe-card">
+            <a href="{% url 'detail' slug=dish.slug %}">
+            <img src="{% for image in dish.images %}{% if forloop.last %}{{ image.image }}{% endif %}{% endfor %}" alt="{{ dish.title }}" class="recipe-image"></a>
+            <div class="recipe-content">
+                <h3 class="recipe-title"><a href="{% url 'detail' slug=dish.slug %}">{{ dish.title }}</a></h3>
+                <p class="recipe-details">{{ dish.cat.name }} - {{ dish.created }}</p>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

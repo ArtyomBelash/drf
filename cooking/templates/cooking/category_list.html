@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% for dish in dishes_by_category %}
+{% if forloop.first %}{{ dish.cat.name }}{% endif %}
+{% endfor %}
+{% endblock %}
+
+{% block page_content %}
+<div class="container">
+    <br>
+    <div class="recipe-container">
+        {% for dish in dishes_by_category %}
+        <div class="recipe-card">
+            <a href="{% url 'detail' slug=dish.slug %}">
+                <img src="{% for image in dish.images %}{% if forloop.last %}{{ image.image }}{% endif %}{% endfor %}"
+                     alt="{{ dish.title }}" class="recipe-image"></a>
+            <div class="recipe-content">
+                <h3 class="recipe-title"><a href="{% url 'detail' slug=dish.slug %}">{{ dish.title }}</a></h3>
+                <a href="{% url 'category' dish.cat.slug %}">{{ dish.cat.name }}</a>
+                <p class="recipe-details">{{ dish.created }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,12 +1,12 @@
 from rest_framework import serializers
-
-from .models import Dish, DishImage, Category
+from django.contrib.auth.models import User
+from .models import Dish, DishImage, Category, UserAndDishes
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ('name', 'slug', )
+        fields = ('name', 'slug',)
 
 
 class DishImageSerializer(serializers.ModelSerializer):
@@ -23,7 +23,36 @@ class DishSerializer(serializers.ModelSerializer):
         model = Dish
         fields = ('id', 'title', 'recipe', 'created', 'cat', 'images', 'slug')
 
-    # class DishSerializer(serializers.Serializer):
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'password')
+
+    def create(self, validated_data):
+        user = User.objects.create(
+            username=validated_data['username'])
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
+
+
+class RelationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserAndDishes
+        fields = ('dish', 'like', 'rate')
+
+    def create(self, validated_data):
+        return UserAndDishes.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.dish = validated_data.get('dish', instance.dish)
+        instance.like = validated_data.get('like', instance.like)
+        instance.rate = validated_data.get('rate', instance.rate)
+        instance.save()
+        return instance
+
+# class DishSerializer(serializers.Serializer):
 #     title = serializers.CharField(max_length=155)
 #     recipe = serializers.CharField()
 #     created = serializers.DateTimeField(read_only=True)

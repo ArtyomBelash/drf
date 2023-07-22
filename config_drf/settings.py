@@ -23,7 +23,8 @@ INSTALLED_APPS = [
 
 INSTALLED_APPS += [
     'cooking_api.apps.CookingApiConfig',
-    'cooking.apps.CookingConfig'
+    'cooking.apps.CookingConfig',
+    'users.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [
@@ -106,3 +107,6 @@ REST_FRAMEWORK = {
     ],
 
 }
+
+LOGIN_REDIRECT_URL = 'index'
+LOGOUT_REDIRECT_URL = 'index'

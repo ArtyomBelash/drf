@@ -13,3 +13,4 @@ class CatAdmin(admin.ModelAdmin):
 admin.site.register(Dish, DishAdmin)
 admin.site.register(Category, CatAdmin)
 admin.site.register(DishImage)
+admin.site.register(UserAndDishes)

@@ -1,10 +1,12 @@
 from rest_framework import generics, viewsets
 from rest_framework.decorators import action
+from rest_framework.mixins import UpdateModelMixin, RetrieveModelMixin
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Dish, Category
+from .models import Dish, Category, UserAndDishes
 from .pagination import DefaultPagination
-from .serializers import DishSerializer, CategorySerializer
+from .serializers import DishSerializer, CategorySerializer, UserSerializer, RelationSerializer
 from .permissions import IsAdminOrReadOnly
 import random
 
@@ -14,6 +16,7 @@ class DishViewSet(viewsets.ModelViewSet):
     serializer_class = DishSerializer
     permission_classes = (IsAdminOrReadOnly,)
     lookup_field = 'slug'
+
     # pagination_class = DefaultPagination
 
     @action(methods=['get'], detail=False)
@@ -40,7 +43,7 @@ class DishViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=True)
     def random_dish(self, request, slug=None):
-        length = len(Dish.objects.all())
+        length = len(self.queryset)
         pk = random.randint(1, length)
         dish = Dish.objects.get(pk=pk)
         return Response(DishSerializer(dish).data)
@@ -51,6 +54,22 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = [IsAdminOrReadOnly]
     lookup_field = 'slug'
+
+
+class UserCreateAPIView(generics.CreateAPIView):
+    serializer_class = UserSerializer
+    permission_classes = (AllowAny,)
+
+
+class RelationAPIViewSet(UpdateModelMixin, RetrieveModelMixin, viewsets.GenericViewSet):
+    queryset = UserAndDishes.objects.all()
+    serializer_class = RelationSerializer
+    permission_classes = (IsAuthenticated,)
+    lookup_field = 'dish'
+
+    def get_object(self):
+        obj, _ = UserAndDishes.objects.get_or_create(user_id=self.request.user.id, dish_id=self.kwargs['dish'])
+        return obj
 
 # class DishesAPIView(generics.ListCreateAPIView):
 #     queryset = Dish.objects.all()

@@ -5,10 +5,12 @@ from .views import *
 router = routers.SimpleRouter()
 router.register(r'dish', DishViewSet)
 router.register(r'category', CategoryViewSet)
+router.register(r'relation', RelationAPIViewSet)
 
 
 urlpatterns = [
-    path('api/v1/', include(router.urls),)
+    path('api/v1/', include(router.urls),),
+    path('api/v1/register/', UserCreateAPIView.as_view()),
     # path('api/v1/all_dishes', DishesAPIView.as_view(), name='api_dishes'),
     # path('api/v1/dish_detail/<int:pk>/', DishAPIDetail.as_view(), name='api_detail'),
     # path('api/v1/all_dishes/<int:pk>/', DishesAPIView.as_view(), name='update_dish'),

@@ -7,6 +7,7 @@ urlpatterns = [
     path('', include('cooking.urls')),
     path('admin/', admin.site.urls),
     path('drf/', include('cooking_api.urls')),
+    path('account/', include('users.urls')),
 ]
 
 if settings.DEBUG:

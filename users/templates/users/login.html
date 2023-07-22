@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+<div class="col-auto mb-4" align="center" style="min-height:82%;">
+    <form method="POST">
+        {% csrf_token %}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Вход</legend>
+            {% for i in form %}
+            <p><label class="form-text" for="{{ i.id_for_label }}">
+                {{i.label}}:
+                 </label>{{ i }}</p>
+            <div class="form-error">{{i.errors}}
+            </div>
+            {% endfor %}
+        </fieldset>
+        <div class="form-group">
+            <button class="btn btn-outline-info" type="submit">Авторизоваться</button>
+        </div>
+    </form>
+    <div class="border-top pt-3">
+        <small class="text-muted">
+            Не зарегистрированы? <a class="ml-2" href="{% url 'register' %}">Регистрация</a>
+        </small>
+    </div>
+</div>
+{% endblock %}

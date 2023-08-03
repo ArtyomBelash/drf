@@ -4,9 +4,40 @@
 {% endblock %}
 
 {% block page_content %}
+<style>
+    .rating {
+      font-size: 2rem;
+      color: #ccc;
+    }
+
+    .star {
+      cursor: pointer;
+      color: #ccc;
+    }
+
+    .star:hover,
+    .star:focus,
+    .star.active {
+      color: gold;
+    }
+
+    .like-button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 0.25rem;
+      background-color: #007bff;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .like-button:hover,
+    .like-button:focus {
+      background-color: #0069d9;
+    }
+
+</style>
 <div class="container">
     <br>
-    {{ user.username }}
     <div class="row">
         <div class="col-md-8">
             <div id="dishImagesCarousel" class="carousel slide" data-bs-ride="carousel">
@@ -45,6 +76,14 @@
                     <p class="card-text"><a href="{% url 'category' dish.cat.slug %}">{{ dish.cat.name }}</a></p>
                     <p class="card-text">{{ dish.recipe | linebreaks }}</p>
                     <p class="card-text"><small class="text-muted">Дата: {{ dish.created }}</small></p>
+                    <div class="rating">
+                        <span class="star" data-value="1">&#9733;</span>
+                        <span class="star" data-value="2">&#9733;</span>
+                        <span class="star" data-value="3">&#9733;</span>
+                        <span class="star" data-value="4">&#9733;</span>
+                        <span class="star" data-value="5">&#9733;</span>
+                    </div>
+                    <button class="like-button">Нравится</button>
                 </div>
             </div>
         </div>

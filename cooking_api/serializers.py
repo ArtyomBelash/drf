@@ -18,10 +18,12 @@ class DishImageSerializer(serializers.ModelSerializer):
 class DishSerializer(serializers.ModelSerializer):
     cat = CategorySerializer()  # вложенный сериализатор для категории
     images = DishImageSerializer(many=True)  # вложенный сериализатор для изображений
+    likes_count = serializers.IntegerField(read_only=True)
+    rating = serializers.DecimalField(max_digits=3, decimal_places=2)
 
     class Meta:
         model = Dish
-        fields = ('id', 'title', 'recipe', 'created', 'cat', 'images', 'slug')
+        fields = ('id', 'title', 'recipe', 'created', 'cat', 'images', 'slug', 'likes_count', 'rating')
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -38,9 +40,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class RelationSerializer(serializers.ModelSerializer):
+    name_of_dish = serializers.CharField(source='dish.title', read_only=True)
+
     class Meta:
         model = UserAndDishes
-        fields = ('dish', 'like', 'rate')
+        fields = ('name_of_dish', 'like', 'rate')
 
     def create(self, validated_data):
         return UserAndDishes.objects.create(**validated_data)

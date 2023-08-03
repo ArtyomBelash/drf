@@ -6,10 +6,11 @@
 <div class="container">
     <br>
     <div class="recipe-container">
-        {% if dishes.error %}
-        <h1>{{ dishes.error }}</h1>
-        {% else %}
+
         {% for dish in dishes_by_search %}
+        {% if dish.error %}
+        <h1>{{ dish.error }}</h1>
+        {% else %}
         <div class="recipe-card">
             <a href="{% url 'detail' slug=dish.slug %}">
             <img src="{% for image in dish.images %}{% if forloop.last %}{{ image.image }}{% endif %}{% endfor %}" alt="{{ dish.title }}" class="recipe-image"></a>
@@ -18,8 +19,8 @@
                 <p class="recipe-details">{{ dish.cat.name }} - {{ dish.created }}</p>
             </div>
         </div>
-        {% endfor %}
         {% endif %}
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

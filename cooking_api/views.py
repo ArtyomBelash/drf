@@ -1,3 +1,4 @@
+from django.db.models import Count, Case, When, Avg
 from rest_framework import generics, viewsets
 from rest_framework.decorators import action
 from rest_framework.mixins import UpdateModelMixin, RetrieveModelMixin
@@ -12,7 +13,9 @@ import random
 
 
 class DishViewSet(viewsets.ModelViewSet):
-    queryset = Dish.objects.all()
+    queryset = Dish.objects.all().select_related('cat').annotate(rating=Avg('useranddishes__rate'),
+                                                                 likes_count=Count(Case(
+                                                                     When(useranddishes__like=True, then=1))))
     serializer_class = DishSerializer
     permission_classes = (IsAdminOrReadOnly,)
     lookup_field = 'slug'
@@ -28,7 +31,10 @@ class DishViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True)
     def category(self, request, slug=None):
         cat = Category.objects.get(slug=slug)
-        dishes = Dish.objects.filter(cat=cat)
+        dishes = Dish.objects.filter(cat=cat).select_related('cat').annotate(rating=Avg('useranddishes__rate'),
+                                                                             likes_count=Count(Case(
+                                                                                 When(useranddishes__like=True,
+                                                                                      then=1))))
         serializer = DishSerializer(dishes, many=True)
         return Response(serializer.data)
 
@@ -36,10 +42,13 @@ class DishViewSet(viewsets.ModelViewSet):
     def search_dishes(self, request):
         if self.request.method == 'GET':
             search_query = self.request.GET.get('search').lower()
-            dishes = Dish.objects.filter(title__regex=fr'(?i){search_query}')
+            dishes = Dish.objects.filter(title__regex=fr'(?i){search_query}').select_related('cat').annotate(
+                rating=Avg('useranddishes__rate'),
+                likes_count=Count(Case(
+                    When(useranddishes__like=True, then=1))))
             if dishes:
                 return Response(DishSerializer(dishes, many=True).data)
-            return Response({'error': 'Nothing. Change search term'})
+            return Response([{'error': 'Nothing. Change search term'}])
 
     @action(methods=['get'], detail=True)
     def random_dish(self, request, slug=None):

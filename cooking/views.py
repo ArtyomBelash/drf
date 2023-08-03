@@ -67,8 +67,9 @@ class SearchDishesView(generic.ListView):
         url = f'{settings.URL}search_dishes/?search={self.request.GET.get("search")}'
         response = requests.get(url)
         dishes_by_search = response.json()
-        if dishes_by_search:
-            for dish in dishes_by_search:
+        for dish in dishes_by_search:
+            created = dish.get('created')
+            if created:
                 dish['created'] = datetime.strptime(dish['created'], '%Y-%m-%dT%H:%M:%S.%f%z')
         return dishes_by_search
 

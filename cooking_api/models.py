@@ -9,7 +9,7 @@ class Dish(models.Model):
     cat = models.ForeignKey('Category', on_delete=models.CASCADE, verbose_name='Категория', related_name='dish')
     images = models.ManyToManyField('DishImage', blank=True, related_name='dishes')
     slug = models.SlugField(max_length=200, db_index=True, unique=True, verbose_name='URL')
-    likes = models.ManyToManyField(User, through='UserAndDishes', related_name='dishes')
+    likes = models.ManyToManyField(User, through='UserAndDishes', related_name='dishes_likes')
 
     def __str__(self):
         return self.title
